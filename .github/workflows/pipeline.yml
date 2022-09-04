@@ -41,7 +41,7 @@ jobs:
           rollbackonhealthcheckfailed: true
       - name: discord webhook notify successful deployment
         uses: rjstone/discord-webhook-notify@v1.0.4
-        if: ${{ success() }}
+        if: ${{ success() && github.event_name == 'push'}}
         with:
           severity: info
           details: Successful deployment to https://walther-pokedex.herokuapp.com/
