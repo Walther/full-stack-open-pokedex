@@ -22,5 +22,6 @@ jobs:
         uses: rjstone/discord-webhook-notify@v1.0.4
         with:
           severity: error
+          description: "The periodic healthcheck failed."
           details: Healthcheck failed for https://walther-pokedex.herokuapp.com/
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
