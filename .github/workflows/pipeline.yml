@@ -39,6 +39,13 @@ jobs:
           healthcheck: "https://walther-pokedex.herokuapp.com/health"
           checkstring: "ok"
           rollbackonhealthcheckfailed: true
+      - name: discord webhook notify successful deployment
+        uses: rjstone/discord-webhook-notify@v1.0.4
+        if: ${{ success() && github.event_name == 'push'}}
+        with:
+          severity: info
+          details: Successful deployment to https://walther-pokedex.herokuapp.com/
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
   tag_release:
     needs: [simple_deployment_pipeline]
     if: github.ref == 'refs/heads/master' && !contains(join(github.event.commits.*.message), '#skip')
@@ -50,3 +57,14 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DEFAULT_BUMP: patch
+  failure_notification:
+    needs: [simple_deployment_pipeline]
+    if: ${{ failure() }}
+    runs-on: ubuntu-20.04
+    steps:
+      - name: discord webhook notify errors
+        uses: rjstone/discord-webhook-notify@v1.0.4
+        with:
+          severity: error
+          details: Pipeline failed for https://walther-pokedex.herokuapp.com/
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
