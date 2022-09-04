@@ -58,10 +58,13 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DEFAULT_BUMP: patch
   failure_notification:
-    - name: discord webhook notify errors
-      uses: rjstone/discord-webhook-notify@v1.0.4
-      if: ${{ failure() }}
-      with:
-        severity: error
-        details: Pipeline failed for https://walther-pokedex.herokuapp.com/
-        webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+    needs: [simple_deployment_pipeline]
+    runs-on: ubuntu-20.04
+    steps:
+      - name: discord webhook notify errors
+        uses: rjstone/discord-webhook-notify@v1.0.4
+        if: ${{ failure() }}
+        with:
+          severity: error
+          details: Pipeline failed for https://walther-pokedex.herokuapp.com/
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
